@@ -22,7 +22,7 @@ namespace API
 
         // This method gets called by the runtime. Use this method to add services to the container.
 
-        [System.Obsolete]
+      
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<DataContext>(opt =>{
@@ -38,9 +38,9 @@ namespace API
             });
             
             services.AddMediatR(typeof(List.Handler).Assembly);
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             //services.AddControllers().AddNewtonsoftJson();
-            //services.AddControllers();
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

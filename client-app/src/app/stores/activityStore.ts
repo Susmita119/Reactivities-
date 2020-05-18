@@ -24,6 +24,7 @@ class ActivityStore {
         });
         this.loadingInitial = false;
       });
+      console.log(this.groupActiviesByDate(activities))
     } catch (error) {
       runInAction("load activities error", () => {
         this.loadingInitial = false;
@@ -39,9 +40,18 @@ class ActivityStore {
 
 
   @computed get activitiesByDate() {
-    return Array.from(this.activityRegistry.values()).sort(
+    return this.groupActiviesByDate(Array.from(this.activityRegistry.values()));
+  }
+
+  groupActiviesByDate(activities : IActivity[]){
+    const sortedActivities = activities.sort(
       (a, b) => Date.parse(a.date) - Date.parse(b.date)
-    );
+    )
+    return Object.entries(sortedActivities.reduce((activities,activity)=>{
+      const date = activity.date.split('T')[0];
+      activities[date] = activities[date] ? [...activities[date],activity] : [activity];
+      return activities;
+    },{} as {[key : string] : IActivity[]}));
   }
   @action createActivity = async (activity: IActivity) => {
     this.submitting = true;
@@ -92,6 +102,7 @@ class ActivityStore {
   @action editActivity = async (activity: IActivity) => {
     this.submitting = true;
     try {
+      console.log("Edit activity :",activity)
       await agent.Activities.update(activity);
       runInAction("editing activity", () => {
         this.activityRegistry.set(activity.id, activity);
